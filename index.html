@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LCNU Tutorial — IEEE Quantum Week (QCE26)</title>
+<meta name="description" content="Linear Combination of Non-unitaries (LCNU): a tutorial at IEEE Quantum Week 2026.">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1b1f24;
+    --muted: #5b636d;
+    --accent: #2f6df6;
+    --card: #f6f8fa;
+    --border: #e4e8ee;
+    --time: #0a7c50;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1116;
+      --fg: #e8ebf0;
+      --muted: #9aa4b1;
+      --accent: #6ea0ff;
+      --card: #161b22;
+      --border: #262d36;
+      --time: #4fd39a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 48px 22px 80px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 26px; margin-bottom: 30px; }
+  .kicker { color: var(--accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: 13px; }
+  h1 { font-size: clamp(26px, 5vw, 38px); line-height: 1.15; margin: 10px 0 6px; }
+  .sub { color: var(--muted); font-size: 17px; margin: 0; }
+  .meta { color: var(--muted); font-size: 14px; margin-top: 14px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 600; font-size: 14px;
+    padding: 9px 15px; border-radius: 8px; border: 1px solid var(--border);
+    color: var(--fg); background: var(--card);
+  }
+  .btn.primary { background: var(--accent); color: #fff; border-color: transparent; }
+  h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 42px 0 14px; }
+  p.abstract { color: var(--fg); }
+  .session { border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 6px 20px 14px; margin-bottom: 20px; }
+  .session h3 { font-size: 20px; margin: 16px 0 4px; }
+  .session .focus { color: var(--muted); margin: 0 0 6px; font-size: 15px; }
+  .session .total { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+  ul.agenda { list-style: none; margin: 0; padding: 0; }
+  ul.agenda li { display: flex; gap: 14px; padding: 11px 0; border-top: 1px solid var(--border); }
+  ul.agenda li .t { flex: 0 0 62px; color: var(--time); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; padding-top: 1px; }
+  ul.agenda li .d { flex: 1; }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Tutorial · IEEE Quantum Week (QCE26)</div>
+    <h1>Linear Combination of Non-unitaries (LCNU)</h1>
+    <p class="sub">A framework for more efficient linear combination of unitaries (LCU) decomposition in quantum linear algebra.</p>
+    <p class="meta"><!-- TODO: add date, room/track, and presenter names --></p>
+    <div class="btns">
+      <a class="btn primary" href="Tutorial_Agenda.pdf">Agenda (PDF)</a>
+      <a class="btn" href="https://github.com/Abeynaya/qce26-lcnu-tutorial">GitHub repo</a>
+    </div>
+  </header>
+
+  <h2>Abstract</h2>
+  <p class="abstract">This tutorial provides a comprehensive exposure to the linear combination of non-unitaries (LCNU), a new framework for more efficient linear combination of unitaries (LCU) decomposition for quantum linear algebra applications. Naive LCU strategies, such as Pauli decomposition, often fail to exploit the symmetry and structure of the underlying matrix and produce a large number of decomposition terms that may nullify any quantum advantage. The LCNU framework addresses this challenge by using an alternative set of simple non-unitary operators that better exploit such underlying matrix properties to achieve a scaling that is polylogarithmic with matrix size. Given that LCU is a fundamental component of many variational and fully fault-tolerant quantum algorithms, replacing LCU with LCNU has been shown to benefit many quantum linear algebra applications, including numerical methods for solving ordinary/partial differential equations. Furthermore, LCNU's flexibility — allowing incorporation of custom operators to tailor decompositions for specific problems — positions it as a versatile "linear combination of things" with broad applicability in quantum computing. The tutorial gives an accessible exposure to the LCNU framework, including the latest theoretical and computational developments, end-to-end case studies, and hands-on coding exercises. After the tutorial, attendees are expected to obtain a rigorous understanding of the LCNU framework, its advantages over alternative methods, and a defined scope of where it can be beneficially applied.</p>
+
+  <h2>Agenda</h2>
+
+  <div class="session">
+    <h3>Session I</h3>
+    <p class="focus">Background, theory, circuit construction, and basic applications of LCNU decomposition.</p>
+    <p class="total">≈ 90 minutes</p>
+    <ul class="agenda">
+      <li><span class="t">10 min</span><span class="d">Basics of standard Pauli-basis LCU and motivation for using Sigma-basis LCNU to more effectively exploit problem structure and sparsity.</span></li>
+      <li><span class="t">10 min</span><span class="d">Mathematical properties of the Sigma basis, and numerical and semi-analytical methods for computing the LCNU decomposition.</span></li>
+      <li><span class="t">15 min</span><span class="d">Concept of unitary completion and its application to efficient quantum circuit construction implementing Sigma-basis tensor-product terms.</span></li>
+      <li><span class="t">20 min</span><span class="d">Using the LCNU framework within hybrid quantum-classical (e.g., variational quantum linear solver) and fully fault-tolerant algorithms (e.g., quantum linear system algorithm) for linear algebra.</span></li>
+      <li><span class="t">20 min</span><span class="d">Applications to simulating physical systems described by linear ODEs (electrical circuits, thermal networks, signal processing) and linear PDEs (heat conduction/diffusion, wave propagation, electrostatics), including an end-to-end resource estimation comparing the Pauli-basis LCU and Sigma-basis LCNU approaches.</span></li>
+      <li><span class="t">10 min</span><span class="d">Pros and cons of LCNU versus alternatives — standard LCU, unitary dilation, and block-encoding methods designed for sparse/structured matrices.</span></li>
+      <li><span class="t">5 min</span><span class="d">Guidelines for identifying problems where the LCNU technique is beneficial.</span></li>
+    </ul>
+  </div>
+
+  <div class="session">
+    <h3>Session II</h3>
+    <p class="focus">Generalizing the Sigma-basis LCNU concept, applications to nonlinear PDEs and fluid problems, and a hands-on coding exercise.</p>
+    <p class="total">≈ 90 minutes</p>
+    <ul class="agenda">
+      <li><span class="t">5 min</span><span class="d">Quick recap of Session I.</span></li>
+      <li><span class="t">10 min</span><span class="d">Framework to generalize the Sigma-basis LCNU by incorporating other unitary and non-unitary operators to expand/modify the Sigma basis and tailor the decomposition for specific problems.</span></li>
+      <li><span class="t">15 min</span><span class="d">Application to nonlinear PDEs, including an introduction to the Carleman linearization technique.</span></li>
+      <li><span class="t">50 min</span><span class="d">End-to-end case study and hands-on coding exercise for simulating fluid flows (e.g., Burgers equation, Lattice Boltzmann Method) with explicit circuit construction, resource estimates, and running prototypical examples on quantum simulators.</span></li>
+      <li><span class="t">10 min</span><span class="d">Conclusions and avenues for future work.</span></li>
+    </ul>
+  </div>
+
+  <footer>
+    Last updated automatically from the tutorial repository.
+    Source: <a href="https://github.com/Abeynaya/qce26-lcnu-tutorial">Abeynaya/qce26-lcnu-tutorial</a>.
+  </footer>
+</div>
+</body>
+</html>
