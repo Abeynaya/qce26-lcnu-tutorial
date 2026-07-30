@@ -57,6 +57,11 @@
   ul.agenda li { display: flex; gap: 14px; padding: 11px 0; border-top: 1px solid var(--border); }
   ul.agenda li .t { flex: 0 0 62px; color: var(--time); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; padding-top: 1px; }
   ul.agenda li .d { flex: 1; }
+  .organizers { margin: 14px 0 0; font-size: 15px; }
+  .meta code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+  ol.refs { margin: 0; padding-left: 26px; font-size: 14.5px; color: var(--fg); }
+  ol.refs li { padding: 5px 0; }
+  ol.refs .venue { color: var(--muted); }
   footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
   a { color: var(--accent); }
 </style>
@@ -67,7 +72,17 @@
     <div class="kicker">Tutorial · IEEE Quantum Week (QCE26)</div>
     <h1>Linear Combination of Non-unitaries (LCNU)</h1>
     <p class="sub">A framework for more efficient linear combination of unitaries (LCU) decomposition in quantum linear algebra.</p>
-    <p class="meta"><!-- TODO: add date, room/track, and presenter names --></p>
+    <p class="organizers"><strong>Organizers:</strong>
+      Amit Surana (RTX Technology Research Center),
+      Abeynaya Gnanasekaran (IonQ),
+      Reuben Demirdjian (U.S. Naval Research Laboratory),
+      Thomas Hogancamp (U.S. Naval Research Laboratory)
+    </p>
+    <p class="meta">
+      <b>Friday, September 18, 2026</b> · Session I 10:00–11:30 AM EDT · Session II 1:00–2:30 PM EDT<br>
+      IEEE Conference #<a href="https://qce.quantum.ieee.org/2026/qce26-schedule/friday-schedule/"><code>TUT::QALG::QCPR::110</code></a>
+      <!-- TODO: add room once finalized -->
+    </p>
     <div class="btns">
       <a class="btn primary" href="Tutorial_Agenda.pdf">Agenda (PDF)</a>
       <a class="btn" href="https://github.com/Abeynaya/qce26-lcnu-tutorial">GitHub repo</a>
@@ -82,7 +97,7 @@
   <div class="session">
     <h3>Session I</h3>
     <p class="focus">Background, theory, circuit construction, and basic applications of LCNU decomposition.</p>
-    <p class="total">≈ 90 minutes</p>
+    <p class="total">Friday, September 18, 2026 · 10:00–11:30 AM EDT · ≈ 90 minutes</p>
     <ul class="agenda">
       <li><span class="t">10 min</span><span class="d">Basics of standard Pauli-basis LCU and motivation for using Sigma-basis LCNU to more effectively exploit problem structure and sparsity.</span></li>
       <li><span class="t">10 min</span><span class="d">Mathematical properties of the Sigma basis, and numerical and semi-analytical methods for computing the LCNU decomposition.</span></li>
@@ -97,7 +112,7 @@
   <div class="session">
     <h3>Session II</h3>
     <p class="focus">Generalizing the Sigma-basis LCNU concept, applications to nonlinear PDEs and fluid problems, and a hands-on coding exercise.</p>
-    <p class="total">≈ 90 minutes</p>
+    <p class="total">Friday, September 18, 2026 · 1:00–2:30 PM EDT · ≈ 90 minutes</p>
     <ul class="agenda">
       <li><span class="t">5 min</span><span class="d">Quick recap of Session I.</span></li>
       <li><span class="t">10 min</span><span class="d">Framework to generalize the Sigma-basis LCNU by incorporating other unitary and non-unitary operators to expand/modify the Sigma basis and tailor the decomposition for specific problems.</span></li>
@@ -106,6 +121,23 @@
       <li><span class="t">10 min</span><span class="d">Conclusions and avenues for future work.</span></li>
     </ul>
   </div>
+
+  <h2>References</h2>
+  <ol class="refs">
+    <li>A. Gnanasekaran and A. Surana, “Efficient quantum access model for sparse structured matrices using linear combination of ‘things’,” <span class="venue">Physical Review A <b>113</b>(2), 022437 (2026).</span></li>
+    <li>A. Gnanasekaran and A. Surana, “Efficient variational quantum linear solver for structured sparse matrices,” <span class="venue">2024 IEEE International Conference on Quantum Computing and Engineering (QCE), vol. 1, pp. 199–210, 2024.</span></li>
+    <li>T. Hogancamp, R. Demirdjian, and D. Gunlycke, “A linear combination of unitaries decomposition for the Laplace operator,” <span class="venue">arXiv:2601.06370 (2026).</span> <a href="https://arxiv.org/abs/2601.06370">arXiv</a></li>
+    <li>R. Demirdjian, T. Hogancamp, and D. Gunlycke, “An efficient decomposition of the Carleman linearized Burgers’ equation,” <span class="venue">arXiv:2505.00285 (2025).</span> <a href="https://arxiv.org/abs/2505.00285">arXiv</a></li>
+    <li>R. Demirdjian, T. Hogancamp, A. Gnanasekaran, A. Surana, and D. Gunlycke, “Quantum data loading for Carleman linearized systems: application to the lattice-Boltzmann equation,” <span class="venue">arXiv:2605.00302 [quant-ph] (2026).</span> <a href="https://arxiv.org/abs/2605.00302">arXiv</a></li>
+    <li>C. Bravo-Prieto, R. LaRose, M. Cerezo, Y. Subaşı, L. Cincio, and P. J. Coles, “Variational quantum linear solver,” <span class="venue">Quantum <b>7</b>, 1188 (2023).</span></li>
+    <li>M. E. S. Morales, L. Pira, P. Schleich, K. Koor, P. Costa, D. An, A. Aspuru-Guzik, L. Lin, P. Rebentrost, and D. W. Berry, “Quantum linear system solvers: a survey of algorithms and applications,” <span class="venue">arXiv:2411.02522 (2024).</span> <a href="https://arxiv.org/abs/2411.02522">arXiv</a></li>
+    <li>H.-M. Li, Z.-X. Wang, and S.-M. Fei, “Variational quantum algorithms for Poisson equations based on the decomposition of sparse Hamiltonians,” <span class="venue">Physical Review A <b>108</b>(3), 032418 (2023).</span></li>
+    <li>R. Demirdjian, D. Gunlycke, C. A. Reynolds, J. D. Doyle, and S. Tafur, “Variational quantum solutions to the advection-diffusion equation for applications in fluid dynamics,” <span class="venue">arXiv:2208.11780 (2022).</span> <a href="https://arxiv.org/abs/2208.11780">arXiv</a></li>
+    <li>J. Hu, S. Jin, N. Liu, and L. Zhang, “Quantum circuits for partial differential equations via Schrödingerisation,” <span class="venue">Quantum <b>8</b>, 1563 (2024).</span></li>
+    <li>A. Surana and A. Gnanasekaran, “Variational quantum framework for partial differential equation constrained optimization,” <span class="venue">ACM Transactions on Quantum Computing <b>7</b>(1), 1–36 (2025).</span></li>
+    <li>A. Gnanasekaran, A. Surana, and H. Zhu, “Variational quantum framework for nonlinear PDE constrained optimization using Carleman linearization,” <span class="venue">Quantum Information &amp; Computation <b>25</b>(3), 260–289 (2025).</span> <a href="https://doi.org/10.2478/qic-2025-0014">DOI</a></li>
+    <li>T. Ali, “Alleviating post-linearization challenges for solving nonlinear systems on a quantum computer,” <span class="venue">arXiv:2602.07097 [quant-ph] (2026).</span> <a href="https://arxiv.org/abs/2602.07097">arXiv</a></li>
+  </ol>
 
   <footer>
     Last updated automatically from the tutorial repository.
