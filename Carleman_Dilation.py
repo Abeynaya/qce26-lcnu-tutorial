@@ -21,7 +21,7 @@ def comm_mat(m, n):
     return np.eye(m * n)[w, :]
 
 def Carleman_Dilation_Matrix(params):
-    tau,nt,nx,dt,dx,nu = params['tau'], params['nt'], params['nx'], params['dt'], params['dx'], params['nu']
+    alpha,nt,nx,dt,dx,nu = params['alpha'], params['nt'], params['nx'], params['dt'], params['dx'], params['nu']
 
     #F1 MATRIX
     main_diag = np.zeros(nx) - 2.0
@@ -51,13 +51,13 @@ def Carleman_Dilation_Matrix(params):
     #BUILD THE LIU2020 SYSTEM OF EQUATIONS
     #EQUATIONS 3.1-3.4 of Liu et al. 2020
     nA = 0
-    for i in range(1,tau+1):
+    for i in range(1,alpha+1):
         nA += nx**i 
-    nAe = 2*nx**tau
+    nAe = 2*nx**alpha
     A = np.zeros((nA,nA))
     Ae = np.zeros((nAe,nAe))
     #LOOP OVER ROWS OF A
-    for j in range(1,tau+1):
+    for j in range(1,alpha+1):
         A1 = 0.
         A2 = 0.
         st = 0
@@ -79,7 +79,7 @@ def Carleman_Dilation_Matrix(params):
 
         #Create the full A matrix 
         A[st:ed,st:ed] = A1
-        if (j<tau):
+        if (j<alpha):
             A[st:ed,ed:ed+nx**(j+1)] = A2
     #Embed the A matrix into the A_e matrix
     Ae[nAe-nA:,nAe-nA:] = A

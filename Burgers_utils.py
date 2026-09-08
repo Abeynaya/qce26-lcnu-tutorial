@@ -109,10 +109,10 @@ def U1U2_circ_L1e(circs,coeffs,params):
     Returns: (1) The circuit for Ctrl-U with control on the ancilla qubit for the Hadamard Test. 
              (2) The coefficients for each embedded circuit.
     """
-    tau,nx,nt,nqubit = params['tau'], params['nx'], params['nt'], params['nqubit']
-    t1 = [4]*int(np.log2(2 * nt * nx**tau))
+    alpha,nx,nt,nqubit = params['alpha'], params['nx'], params['nt'], params['nqubit']
+    t1 = [4]*int(np.log2(2 * nt * nx**alpha))
     t2 = []
-    t3 = [1]*int(np.log2(nt)) + [4]*int(np.log2(2 * nx**tau))
+    t3 = [1]*int(np.log2(nt)) + [4]*int(np.log2(2 * nx**alpha))
     qbs = [t1,t2,t3]
     coeffs += [1.,-1.,1.]
 
@@ -126,7 +126,7 @@ def U1U2_circ_L1e(circs,coeffs,params):
             if (qbs_bar[k] == 0):
                 qc.cx(nqubit,nqubit-2-k)
         if (t == 1): 
-            cu.Incrementer(int(np.log2(nt)),qc,int(np.log2(2 * nx**tau)),params)
+            cu.Incrementer(int(np.log2(nt)),qc,int(np.log2(2 * nx**alpha)),params)
 
         #Controlled U_1 circuit
         qc = U1(qc,qbs[t],params)
@@ -142,7 +142,7 @@ def U1U2_circ_Lejj(circs,coeffs,params):
     Returns: (1) The circuit for Ctrl-U with control on the ancilla qubit for the Hadamard Test. 
              (2) The coefficients for each embedded circuit.
     """
-    tau, nx, nt, nqubit, dt, dx, nu = params['tau'], params['nx'], params['nt'], params['nqubit'], params['dt'], params['dx'], params['nu']
+    alpha, nx, nt, nqubit, dt, dx, nu = params['alpha'], params['nx'], params['nt'], params['nqubit'], params['dt'], params['dx'], params['nu']
 
     #Static lists
     t1 = [4]*int(int(np.log2(nt))) #I_2^{\otimes int(np.log2(nt))}
@@ -151,10 +151,10 @@ def U1U2_circ_Lejj(circs,coeffs,params):
     t1t2.append(t1)
     t1t2.append(t2)
     for t in range(0,2):
-        for j in range(1,tau+1):
+        for j in range(1,alpha+1):
             qbs = []
             qbs += t1t2[t]
-            qbs += ([0] + [3]*int(np.log2(nx)-1))*(tau-j) + [3] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (tau-j)} otimes sig3
+            qbs += ([0] + [3]*int(np.log2(nx)-1))*(alpha-j) + [3] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (alpha-j)} otimes sig3
             qbs_bar = binary_str([qbs])[0] #Complement for the sigma terms
 
             for l in range(0,j):
@@ -219,7 +219,7 @@ def U1U2_circ_Lejp1j(circs,coeffs,params):
     Returns: (1) The circuit for Ctrl-U with control on the ancilla qubit for the Hadamard Test. 
              (2) The coefficients for each embedded circuit.
     """
-    tau, nx, nt, nqubit, dt, dx, nu = params['tau'], params['nx'], params['nt'], params['nqubit'], params['dt'], params['dx'], params['nu']
+    alpha, nx, nt, nqubit, dt, dx, nu = params['alpha'], params['nx'], params['nt'], params['nqubit'], params['dt'], params['dx'], params['nu']
 
     #Static lists
     t1 = [4]*int(int(np.log2(nt))) #I_2^{\otimes int(np.log2(nt))}
@@ -228,10 +228,10 @@ def U1U2_circ_Lejp1j(circs,coeffs,params):
     t1t2.append(t1)
     t1t2.append(t2)
     for t in range(0,2):
-        for j in range(1,tau):
+        for j in range(1,alpha):
             qbs = []
             qbs += t1t2[t]
-            qbs += ([0] + [3]*int(np.log2(nx)-1))*(tau-j-1) + [1] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (tau-j-1)} otimes sig1
+            qbs += ([0] + [3]*int(np.log2(nx)-1))*(alpha-j-1) + [1] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (alpha-j-1)} otimes sig1
             qbs_bar = binary_str([qbs])[0] #Complement for the sigma terms
 
             for l in range(0,j):
