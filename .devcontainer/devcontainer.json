@@ -1,0 +1,13 @@
+{
+  "name": "Jupyter Notebook Data Science",
+  "image": "://microsoft.com",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+  "updateContentCommand": "pip3 install -r requirements.txt"
+}

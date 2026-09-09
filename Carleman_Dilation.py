@@ -1,7 +1,6 @@
 #Generate the Carleman dilation method from Demirdjian 2025
 
 import numpy as np
-import math
 import scipy.sparse as sparse
 import matplotlib.pyplot as plt
 
