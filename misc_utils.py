@@ -45,17 +45,17 @@ def normalized_initial_condition(params):
     return(Be)
 
 
-def solve_sys(Le_real,Be,params):
+def solve_sys(Le_class,Be,params):
 
     nx,nt,alpha = params['nx'],params['nt'],params['alpha']
 
-    x_class_full = np.linalg.solve(Le_real,Be)
+    x_class_full = np.linalg.solve(Le_class,Be)
     x_class_full = x_class_full/np.linalg.norm(x_class_full) #Normalize 
-    x_class = np.zeros(nt*nx)
+    x_class = np.zeros((nt,nx))
     delta = np.sum([int(nx**j) for j in range(1,alpha+1)])
     for i in range(nt):
         offset = int((i+1)*2*nx**alpha - delta)
-        x_class[i*nx:(i+1)*nx] = x_class_full[offset:nx+offset]
+        x_class[i,:] = x_class_full[offset:nx+offset]
     return(x_class)
 
 

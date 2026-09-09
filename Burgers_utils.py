@@ -12,7 +12,6 @@
 #GS24 = Gnanasekaran & Surana 2024. "Efficient variational quantum linear solver for structured sparse matrices"
 #DH26 = Demirdjian & Hogancamp et al. 2026. "Quantum Data Loading for Carleman Linearized Systems: Application to the Lattice-Boltzmann Equation"
 #DQ26 = Demirdjian & Quinn et al. 2026. "A Scalable Approach to Solve the Carleman Linearized Burgers' Equation on a Quantum Computer"
-#Demi22 = ...
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
@@ -110,9 +109,9 @@ def U1U2_circ_L1e(circs,coeffs,params):
              (2) The coefficients for each embedded circuit.
     """
     alpha,nx,nt,nqubit = params['alpha'], params['nx'], params['nt'], params['nqubit']
-    t1 = [4]*int(np.log2(2 * nt * nx**alpha))
+    t1 = [4]*int(np.log2(2) + np.log2(nt) + alpha*np.log2(nx)) #int(np.log2(2 * nt * nx**alpha))
     t2 = []
-    t3 = [1]*int(np.log2(nt)) + [4]*int(np.log2(2 * nx**alpha))
+    t3 = [1]*int(np.log2(nt)) + [4]* int(np.log2(2) + alpha*np.log2(nx)) #int(np.log2(2 * nx**alpha))
     qbs = [t1,t2,t3]
     coeffs += [1.,-1.,1.]
 
@@ -126,7 +125,9 @@ def U1U2_circ_L1e(circs,coeffs,params):
             if (qbs_bar[k] == 0):
                 qc.cx(nqubit,nqubit-2-k)
         if (t == 1): 
-            cu.Incrementer(int(np.log2(nt)),qc,int(np.log2(2 * nx**alpha)),params)
+            #cu.Incrementer(int(np.log2(nt)),qc,int(np.log2(2 * nx**alpha)),params)
+            cu.Incrementer(int(np.log2(nt)),qc,int(np.log2(2) + alpha*np.log2(nx)),params)
+
 
         #Controlled U_1 circuit
         qc = U1(qc,qbs[t],params)
@@ -306,9 +307,10 @@ def create_circs(params):
     circs,coeffs = U1U2_circ_Lejp1j(circs,coeffs,params)
 
     #Transpile all circuits
-    simulator = AerSimulator()
-    for i,circ in enumerate(circs):
-        circs[i] = transpile(circ, simulator, optimization_level=3)
+    if params['lTranspile']:
+        simulator = AerSimulator()
+        for i,circ in enumerate(circs):
+            circs[i] = transpile(circ, simulator, optimization_level=3)
 
     return(circs,coeffs)
 
@@ -321,7 +323,7 @@ def validate_CarlemanDilated_Matrix(circs,coeffs,params):
     Returns: Le_real = the actual Carleman linearized matrix
              Le_circ = the matrix derived from the circuits
     """
-    nqubit,coeff_thresh,error_thresh = params['nqubit'],params['coeff_thresh'],params['error_thresh']
+    nqubit = params['nqubit']
     Le_circ = 0.
     for i in range(len(circs)):
         print('Working on', i)
@@ -332,21 +334,19 @@ def validate_CarlemanDilated_Matrix(circs,coeffs,params):
         result = simulator.run(circ).result()             # Run
         unitary = result.get_unitary(circ).to_matrix()    # Get unitary
         U_circ = unitary[int(2**(nqubit)):,int(2**(nqubit)):]**2  # Post-select on the last ancilla=1
-        if (np.abs(coeffs[i])>coeff_thresh): #Only sum terms with sufficient magnitude
-            Le_circ += coeffs[i] * U_circ[:int(2**(nqubit-1)),:int(2**(nqubit-1))] # Extract the embedded non-untiary
+        Le_circ += coeffs[i] * U_circ[:int(2**(nqubit-1)),:int(2**(nqubit-1))] # Extract the embedded non-untiary
         del([circ,unitary,result,U_circ])
     
     #Carleman dilated matrix
     Le_real = Carleman_Dilation.Carleman_Dilation_Matrix(params)
     
     #Check Matrices against eachother
-    #error = np.linalg.norm(Le_circ-Le_real)#/np.linalg.norm(Le_real)
-    error = np.max(np.abs(Le_circ-Le_real))
-    if (error < error_thresh):
+    error = np.linalg.norm(Le_circ-Le_real)
+    #error = np.max(np.abs(Le_circ-Le_real))
+    if (error < 1e-10):
         print('Successful validation, max error is ', error)
     else:
         print('Unsuccessful validation, max error is ', error)
-
     return(Le_real,Le_circ)
 
 

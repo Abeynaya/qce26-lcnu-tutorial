@@ -13,13 +13,6 @@ import matplotlib.pyplot as plt
 #DIRS
 outdir = './'
 
-def comm_mat(m, n):
-    # determine permutation applied by K
-    w = np.arange(m * n).reshape((m, n), order="F").T.ravel(order="F")
-
-    # apply this permutation to the rows (i.e. to each column) of identity matrix and return result
-    return np.eye(m * n)[w, :]
-
 def Carleman_Dilation_Matrix(params):
     alpha,nt,nx,dt,dx,nu = params['alpha'], params['nt'], params['nx'], params['dt'], params['dx'], params['nu']
 
@@ -50,9 +43,7 @@ def Carleman_Dilation_Matrix(params):
 
     #BUILD THE LIU2020 SYSTEM OF EQUATIONS
     #EQUATIONS 3.1-3.4 of Liu et al. 2020
-    nA = 0
-    for i in range(1,alpha+1):
-        nA += nx**i 
+    nA = np.sum([nx**i for i in range(1,alpha+1)])
     nAe = 2*nx**alpha
     A = np.zeros((nA,nA))
     Ae = np.zeros((nAe,nAe))
