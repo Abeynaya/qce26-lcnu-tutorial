@@ -1,6 +1,6 @@
 {
   "name": "Jupyter Notebook Data Science",
-  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
   "customizations": {
     "vscode": {
       "extensions": [
