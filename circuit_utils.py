@@ -8,7 +8,6 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile, qpy
 from qiskit.circuit import ParameterVector
 from qiskit_aer import AerSimulator
-import time
 
 def Ansatz_Sim9_Modified(params):
     """#Ansatz circuit. Modified version of circuit 9 from Sims et al. (2019)

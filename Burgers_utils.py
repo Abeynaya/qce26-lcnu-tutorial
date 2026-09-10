@@ -342,7 +342,6 @@ def validate_CarlemanDilated_Matrix(circs,coeffs,params):
     
     #Check Matrices against eachother
     error = np.linalg.norm(Le_circ-Le_real)
-    #error = np.max(np.abs(Le_circ-Le_real))
     if (error < 1e-10):
         print('Successful validation, max error is ', error)
     else:
