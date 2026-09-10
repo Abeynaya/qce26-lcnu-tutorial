@@ -13,6 +13,14 @@ import matplotlib.pyplot as plt
 outdir = './'
 
 def Carleman_Dilation_Matrix(params):
+    """Create the zero padded 1D Carleman linearized Burgers' equation matrix: L^e
+
+    Args: alpha=truncation order, nt=number of time steps, nx=number of spatial grid points ,
+    dt=size of time steps, dx=spatial grid spacing, nu=diffusion coefficient
+
+    Returns: The L^e matrix which has size 2*n_t*n_x^alpha
+    """
+
     alpha,nt,nx,dt,dx,nu = params['alpha'], params['nt'], params['nx'], params['dt'], params['dx'], params['nu']
 
     #F1 MATRIX

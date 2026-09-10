@@ -1,7 +1,13 @@
 import numpy as np
 
 def create_Be(u_0,params):
+    """Create the RHS vector of the Carleman linearized system of the form: L^eY^e=B^e
 
+    Args: u_0=initial condition of the Burgers' equation, nx=number of spatial points, 
+    nt=number of time steps, alpha=Carleman truncation order
+
+    Returns: normalized Be vector
+    """
     nx,nt,alpha = params['nx'],params['nt'],params['alpha']
 
     ye0 = np.zeros(int(2*nx**alpha))
@@ -24,9 +30,10 @@ def normalized_initial_condition(params):
     """Creates the initial condition vector for the zero padded Carleman linear system
     Specifically, craetes B^{(e)} of eq. 19 in DH26.
 
-    Args:
+    Args: ic_type=initial condition type, nx=number of spatial points, 
+    nt=number of time steps, alpha=Carleman truncation order, Length=domain length
 
-    Returns:    
+    Returns: normalized Be vector
     """
     nx,nt,alpha,Length,ic_type = params['nx'],params['nt'],params['alpha'],params['Length'],params['ic_type']
     sig  = 0.5
@@ -46,7 +53,12 @@ def normalized_initial_condition(params):
 
 
 def solve_sys(Le_class,Be,params):
+    """Solve the linear system L^eY^e=B^e
+    
+    Args: L^e=Carleman matrix, B^e=Carleman initial condition
 
+    Returns: x_class != Y^e. Instead, x_class extracts the solution at each time step and each grid point, which is embedded within Y^e.
+    """
     nx,nt,alpha = params['nx'],params['nt'],params['alpha']
 
     x_class_full = np.linalg.solve(Le_class,Be)

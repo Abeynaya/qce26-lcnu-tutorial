@@ -13,9 +13,9 @@ def Ansatz_Sim9_Modified(params):
     """#Ansatz circuit. Modified version of circuit 9 from Sims et al. (2019)
     #Same one used in Demi22
 
-    Args:
+    Args: nqubit=number of qubits in ansatz circuit, ntheta=number of variational parameters, nlayer=number of ansatz layers
 
-    Returns:
+    Returns: A circuit representing the parameterized ansatz
     """
     nqubit,ntheta,nlayer = params['nqubit'],params['ntheta'],params['nlayer']    
     circ = QuantumCircuit(nqubit-1)
@@ -28,12 +28,17 @@ def Ansatz_Sim9_Modified(params):
             circ.cz (iz,iz+1)
         for iz in range(0,nqubit-1):
             m += 1
-            #circ.rx(thetas[m],iz) #unmodified Sim
             circ.ry(thetas[m],iz)
     return(circ)
 
 
-def Ansatz_Sim18(params):
+def Ansatz_Sim18Mod(params):
+    """#Ansatz circuit. Modified version of circuit 18 from Sims et al. (2019)
+
+    Args: nqubit=number of qubits in ansatz circuit, ntheta=number of variational parameters, nlayer=number of ansatz layers
+
+    Returns: A circuit representing the parameterized ansatz
+    """
     nqubit,ntheta,nlayer = params['nqubit'],params['ntheta'],params['nlayer']    
     circ = QuantumCircuit(nqubit-1)
     thetas = ParameterVector('params',ntheta)
@@ -46,11 +51,9 @@ def Ansatz_Sim18(params):
             # m += 1
             # circ.rz(thetas[m],iz)
         m += 1
-        #circ.crz(thetas[m],nqubit-2,0)
         circ.cry(thetas[m],nqubit-2,0)
         for iz in range(nqubit-3,-1,-1):
             m += 1
-            #circ.crz(thetas[m],iz,iz+1)
             circ.cry(thetas[m],iz,iz+1)
     return(circ)
 
@@ -145,6 +148,13 @@ def P_plus(nq,qc,offset,params):
 
 
 def create_beta_ij(i,j,qc_carl,qc_anz,params):
+    """Create the beta_ij circuits from the VQLS cost function
+
+    Args: i,j=looping indices, qc_carl=circuits for LCNU of L^e, qc_anz=parameterized ansatz circuit
+
+    Returns: beta_ij
+    """
+
     nqubit = params['nqubit']
     beta_ij = QuantumCircuit(nqubit+1)
     #Ansatz=V(theta)
@@ -164,7 +174,12 @@ def create_beta_ij(i,j,qc_carl,qc_anz,params):
 
 
 def measure_beta_ij(circs_beta,coeffs_ij,thetas):
+    """Measure ancilla's in beta circuit to find expectation value. See GS2024 for details.
 
+    Args: circs_beta=beta circuits, coeffs_ij=coefficients from LCNU, thetas=values for variational parameters
+
+    Returns: beta_ijk
+    """
     #Assign updated parameters
     circs = [qc.assign_parameters(thetas) for qc in circs_beta]
 
@@ -186,6 +201,12 @@ def measure_beta_ij(circs_beta,coeffs_ij,thetas):
 
 
 def create_delta_ijk(i,j,k,qc_carl,qc_anz,qc_init,params):
+    """Create the delta_ijk circuits from the VQLS cost function
+
+    Args: i,j,k=looping indices, qc_carl=circuits for LCNU of L^e, qc_anz=parameterized ansatz circuit
+
+    Returns: bdelta_ijk
+    """
     #C-U=closed control U gate, OC-U=open control U gate
     nqubit= params['nqubit']
     delta_ijk = QuantumCircuit(nqubit+1)
@@ -220,29 +241,14 @@ def create_delta_ijk(i,j,k,qc_carl,qc_anz,qc_init,params):
 
 
 def measure_delta_ijk(circs_delta,coeffs_ijk,thetas):
+    """Measure ancilla's in beta circuit to find expectation value. See GS2024 for details.
 
+    Args: circs_beta=beta circuits, coeffs_ij=coefficients from LCNU, thetas=values for variational parameters
+
+    Returns: beta_ijk
+    """
     #Assign updated parameters
     circs = [qc.assign_parameters(thetas) for qc in circs_delta]
-
-    # #Testing
-    # circs = QuantumCircuit(3)
-    # circs.h(0) #V
-    # circs.h(2) #h
-    # #U1
-    # circs.x(2) 
-    # circs.ccx(0,2,1)
-    # circs.x(2)
-    # #U2
-    # circs.cx(2,0)
-    # circs.ccx(0,2,1)
-    # #CCZ
-    # circs.x(1)
-    # circs.ccz(1,2,0)
-    # circs.x(1)
-    # circs.h(2) #h
-    # circs.measure_all()
-    # circs.save_statevector() #exact statevector
-    # print(circs)
 
     # Batch all parameter sets into one run call
     backend = AerSimulator(method="statevector")
@@ -258,20 +264,6 @@ def measure_delta_ijk(circs_delta,coeffs_ijk,thetas):
         P10 = np.sum(probs[i][2**(n-1):3*2**(n-2)])
         #P11 = np.sum(probs[i][3*2**(n-2):])
         delta += coeffs_ijk[i] * (P00-P10)
-
-    # delta=0
-    # #print(result.get_counts())
-    # probs = np.abs(result.get_statevector(0).data)**2
-    # n = int(np.log2(len(probs)))
-    # delta = 0
-    # P00 = np.sum(probs[:2**(n-2)])
-    # P01 = np.sum(probs[2**(n-2):2**(n-1)])
-    # P10 = np.sum(probs[2**(n-1):3*2**(n-2)])
-    # P11 = np.sum(probs[3*2**(n-2):])
-    # print(P00,P01,P10,P11)
-    # delta += (P10-P00)
-    # print(delta)
-
     return(delta)
 
 

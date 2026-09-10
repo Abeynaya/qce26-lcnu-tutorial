@@ -326,7 +326,6 @@ def validate_CarlemanDilated_Matrix(circs,coeffs,params):
     nqubit = params['nqubit']
     Le_circ = 0.
     for i in range(len(circs)):
-        print('Working on', i)
         #Run the circuit and extract the unitary matrix
         simulator = AerSimulator()
         circ = transpile(circs[i], simulator)
@@ -343,14 +342,19 @@ def validate_CarlemanDilated_Matrix(circs,coeffs,params):
     #Check Matrices against eachother
     error = np.linalg.norm(Le_circ-Le_real)
     if (error < 1e-10):
-        print('Successful validation, max error is ', error)
+        print('Successful validation, error is ', error)
     else:
-        print('Unsuccessful validation, max error is ', error)
+        print('Unsuccessful validation, error is ', error)
     return(Le_real,Le_circ)
 
 
 def extract_Aj_from_Uj(circs,params):
+    """Extract the embedded non-unitary matrix A_j from the unitary circuit for U_j
 
+    Args: circs=list of unitary circuits for each U_j, nqubit=size of unitary circuit
+
+    Returns:The embedded non-unitary A_j matrices.
+    """
     nqubit = params['nqubit']
 
     simulator = AerSimulator()
@@ -367,6 +371,12 @@ def extract_Aj_from_Uj(circs,params):
 
 
 def extract_UZUd(qc_init,params):
+    """Extract the unitary observable U_b * Z_k * U_b^dagger (Z_k=Pauli-Z gate at kth qubit)
+    
+    Args: qc_init=Circuit representation of the unitary U_b matrix, nqubit=size of unitary circuit
+
+    Returns:The observable U_b * Z_k * U_b^dagger for each k
+    """
     nqubit = params['nqubit']
 
     simulator = AerSimulator()
