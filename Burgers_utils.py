@@ -18,6 +18,7 @@ from qiskit import QuantumCircuit, transpile
 import Carleman_Dilation
 import circuit_utils as cu
 from qiskit_aer import AerSimulator
+import matplotlib.pyplot as plt
 
 
 def binary_str(qbs):
@@ -394,3 +395,16 @@ def extract_UZUd(qc_init,params):
 
     return(UZUd)
 
+def plot_CarlemanMatrix(params):
+    Le_class = Carleman_Dilation.Carleman_Dilation_Matrix(params)
+    nA = np.sum([params['nx']**i for i in range(1,params['alpha']+1)])
+    dim0 = np.shape(Le_class)[0] - nA
+    fig, ax = plt.subplots()
+    p1 = ax.spy(Le_class[dim0:,dim0:], aspect = 'auto', markersize=2, alpha = 1., c='black')
+    for i in range(1,params['alpha']):
+        ax.axhline(y=params['nx']**i-0.5, color='black', linestyle='--')
+        ax.axvline(x=params['nx']**i-0.5, color='black', linestyle='--')
+
+    ax.set_aspect('equal')
+    ax.set_title(r'Carleman Matrix')
+    plt.savefig("CarlemanMatrix.png")
