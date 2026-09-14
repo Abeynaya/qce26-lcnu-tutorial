@@ -8,6 +8,8 @@ import numpy as np
 from qiskit import QuantumCircuit, transpile, qpy
 from qiskit.circuit import ParameterVector
 from qiskit_aer import AerSimulator
+import sympy as sp
+
 
 def Ansatz_Sim9_Modified(params):
     """#Ansatz circuit. Modified version of circuit 9 from Sims et al. (2019)
@@ -39,17 +41,14 @@ def Ansatz_Sim18Mod(params):
 
     Returns: A circuit representing the parameterized ansatz
     """
-    nqubit,ntheta,nlayer = params['nqubit'],params['ntheta'],params['nlayer']    
+    nqubit,ntheta,nlayer = params['nqubit'],params['ntheta'],params['nlayer']
     circ = QuantumCircuit(nqubit-1)
     thetas = ParameterVector('params',ntheta)
     m = -1    
     for ly in range(0,nlayer):
         for iz in range(0,nqubit-1):
             m += 1
-            #circ.rx(thetas[m],iz)
             circ.ry(thetas[m],iz)
-            # m += 1
-            # circ.rz(thetas[m],iz)
         m += 1
         circ.cry(thetas[m],nqubit-2,0)
         for iz in range(nqubit-3,-1,-1):

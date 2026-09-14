@@ -19,7 +19,7 @@ import Carleman_Dilation
 import circuit_utils as cu
 from qiskit_aer import AerSimulator
 import matplotlib.pyplot as plt
-
+import platform
 
 def binary_str(qbs):
     """Calculates the unitary complement of a tensor product of sigma basis elements following Theorem 2 of GS24.
@@ -379,20 +379,21 @@ def extract_UZUd(qc_init,params):
     Returns:The observable U_b * Z_k * U_b^dagger for each k
     """
     nqubit = params['nqubit']
-
-    simulator = AerSimulator()
-    UZUd = []
-    for k in range(nqubit-1):
-        circ = QuantumCircuit(nqubit-1)
-        circ.compose(qc_init.inverse(),list(range(0,nqubit-1)),inplace=True) #U_b^dagger
-        circ.z(k)
-        circ.compose(qc_init,list(range(0,nqubit-1)),inplace=True) #U_b
-
-        circ = transpile(circ, simulator)
-        circ.save_unitary()
-        result = simulator.run(circ).result()
-        UZUd.append(result.get_unitary(circ).to_matrix())
-
+    if platform.system() == "Windows":
+        simulator = AerSimulator()
+        UZUd = []
+        for k in range(nqubit-1):
+            circ = QuantumCircuit(nqubit-1)
+            circ.compose(qc_init.inverse(),list(range(0,nqubit-1)),inplace=True) #U_b^dagger
+            circ.z(k)
+            circ.compose(qc_init,list(range(0,nqubit-1)),inplace=True) #U_b
+            circ = transpile(circ, simulator)
+            circ.save_unitary()
+            result = simulator.run(circ).result()
+            UZUd.append(result.get_unitary(circ).to_matrix())
+            np.save('UZUd', UZUd)
+    elif platform.system() == "Linux":
+        UZUd = np.load('UZUd.npy') #Bug in the linux system. Load the result from a windows run
     return(UZUd)
 
 def plot_CarlemanMatrix(params):
