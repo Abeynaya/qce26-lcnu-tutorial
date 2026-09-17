@@ -20,6 +20,7 @@ import circuit_utils as cu
 from qiskit_aer import AerSimulator
 import matplotlib.pyplot as plt
 import platform
+import math
 
 def binary_str(qbs):
     """Calculates the unitary complement of a tensor product of sigma basis elements following Theorem 2 of GS24.
@@ -110,9 +111,9 @@ def U1U2_circ_L1e(circs,coeffs,params):
              (2) The coefficients for each embedded circuit.
     """
     alpha,nx,nt,nqubit = params['alpha'], params['nx'], params['nt'], params['nqubit']
-    t1 = [4]*int(np.log2(2) + np.log2(nt) + alpha*np.log2(nx)) #int(np.log2(2 * nt * nx**alpha))
+    t1 = [4]*int(math.log2(2) + math.log2(nt) + alpha*math.log2(nx)) #int(math.log2(2 * nt * nx**alpha))
     t2 = []
-    t3 = [1]*int(np.log2(nt)) + [4]* int(np.log2(2) + alpha*np.log2(nx)) #int(np.log2(2 * nx**alpha))
+    t3 = [1]*int(math.log2(nt)) + [4]* int(math.log2(2) + alpha*math.log2(nx)) #int(math.log2(2 * nx**alpha))
     qbs = [t1,t2,t3]
     coeffs += [1.,-1.,1.]
 
@@ -126,8 +127,8 @@ def U1U2_circ_L1e(circs,coeffs,params):
             if (qbs_bar[k] == 0):
                 qc.cx(nqubit,nqubit-2-k)
         if (t == 1): 
-            #cu.Incrementer(int(np.log2(nt)),qc,int(np.log2(2 * nx**alpha)),params)
-            cu.Incrementer(int(np.log2(nt)),qc,int(np.log2(2) + alpha*np.log2(nx)),params)
+            #cu.Incrementer(int(math.log2(nt)),qc,int(math.log2(2 * nx**alpha)),params)
+            cu.Incrementer(int(math.log2(nt)),qc,int(math.log2(2) + alpha*math.log2(nx)),params)
 
 
         #Controlled U_1 circuit
@@ -147,8 +148,8 @@ def U1U2_circ_Lejj(circs,coeffs,params):
     alpha, nx, nt, nqubit, dt, dx, nu = params['alpha'], params['nx'], params['nt'], params['nqubit'], params['dt'], params['dx'], params['nu']
 
     #Static lists
-    t1 = [4]*int(int(np.log2(nt))) #I_2^{\otimes int(np.log2(nt))}
-    t2 = [0]*int(int(np.log2(nt))) #(sig_+sig_-)^{\otimes int(np.log2(nt))}
+    t1 = [4]*int(int(math.log2(nt))) #I_2^{\otimes int(math.log2(nt))}
+    t2 = [0]*int(int(math.log2(nt))) #(sig_+sig_-)^{\otimes int(math.log2(nt))}
     t1t2 = []
     t1t2.append(t1)
     t1t2.append(t2)
@@ -156,7 +157,7 @@ def U1U2_circ_Lejj(circs,coeffs,params):
         for j in range(1,alpha+1):
             qbs = []
             qbs += t1t2[t]
-            qbs += ([0] + [3]*int(np.log2(nx)-1))*(alpha-j) + [3] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (alpha-j)} otimes sig3
+            qbs += ([0] + [3]*int(math.log2(nx)-1))*(alpha-j) + [3] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (alpha-j)} otimes sig3
             qbs_bar = binary_str([qbs])[0] #Complement for the sigma terms
 
             for l in range(0,j):
@@ -175,9 +176,9 @@ def U1U2_circ_Lejj(circs,coeffs,params):
                     #pm==0 is incrementer, pm==1 is I, pm==2 is decrementer
                     #The pm order above is chosen to make coefficient calculation simpler
                     if (pm == 0):
-                        cu.Decrementer(int(np.log2(nx)),qc,int(np.log2(nx))*(j-l-1),params)
+                        cu.Decrementer(int(math.log2(nx)),qc,int(math.log2(nx))*(j-l-1),params)
                     if (pm == 2): 
-                        cu.Incrementer(int(np.log2(nx)),qc,int(np.log2(nx))*(j-l-1),params)
+                        cu.Incrementer(int(math.log2(nx)),qc,int(math.log2(nx))*(j-l-1),params)
 
                     #U1
                     #Get bitstring for AA^T
@@ -224,8 +225,8 @@ def U1U2_circ_Lejp1j(circs,coeffs,params):
     alpha, nx, nt, nqubit, dt, dx, nu = params['alpha'], params['nx'], params['nt'], params['nqubit'], params['dt'], params['dx'], params['nu']
 
     #Static lists
-    t1 = [4]*int(int(np.log2(nt))) #I_2^{\otimes int(np.log2(nt))}
-    t2 = [0]*int(int(np.log2(nt))) #(sig_+sig_-)^{\otimes int(np.log2(nt))}
+    t1 = [4]*int(int(math.log2(nt))) #I_2^{\otimes int(math.log2(nt))}
+    t2 = [0]*int(int(math.log2(nt))) #(sig_+sig_-)^{\otimes int(math.log2(nt))}
     t1t2 = []
     t1t2.append(t1)
     t1t2.append(t2)
@@ -233,7 +234,7 @@ def U1U2_circ_Lejp1j(circs,coeffs,params):
         for j in range(1,alpha):
             qbs = []
             qbs += t1t2[t]
-            qbs += ([0] + [3]*int(np.log2(nx)-1))*(alpha-j-1) + [1] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (alpha-j-1)} otimes sig1
+            qbs += ([0] + [3]*int(math.log2(nx)-1))*(alpha-j-1) + [1] #(sig0 otimes sig3^{log(nx)-1})^{\otimes (alpha-j-1)} otimes sig1
             qbs_bar = binary_str([qbs])[0] #Complement for the sigma terms
 
             for l in range(0,j):
@@ -247,23 +248,23 @@ def U1U2_circ_Lejp1j(circs,coeffs,params):
                             qc.cx(nqubit,nqubit-2-k)
 
                     #K^{n_x^2,n_x^l}
-                    cu.commutation_circ(2*int(np.log2(nx)),l*int(np.log2(nx)),qc,int(np.log2(nx))*(j-l-1),nqubit)
+                    cu.commutation_circ(2*int(math.log2(nx)),l*int(math.log2(nx)),qc,int(math.log2(nx))*(j-l-1),nqubit)
                 
                     #The Incrementer/Decrementer term from equation 21 of DQ26
                     if (pm == 0):
-                        cu.P_plus(int(np.log2(nx)),qc,int(np.log2(nx)*(j-1)),params)
+                        cu.P_plus(int(math.log2(nx)),qc,int(math.log2(nx)*(j-1)),params)
                     elif (pm == 1):
-                        cu.P_minus(int(np.log2(nx)),qc,int(np.log2(nx)*(j-1)),params)
+                        cu.P_minus(int(math.log2(nx)),qc,int(math.log2(nx)*(j-1)),params)
 
-                    #sig0^{\otimes int(np.log2(nx))} \otimes K^{n_x^l,n_x}
-                    cu.commutation_circ(int(np.log2(nx))*l,int(np.log2(nx)),qc,int(np.log2(nx))*(j-l-1),nqubit)
+                    #sig0^{\otimes int(math.log2(nx))} \otimes K^{n_x^l,n_x}
+                    cu.commutation_circ(int(math.log2(nx))*l,int(math.log2(nx)),qc,int(math.log2(nx))*(j-l-1),nqubit)
 
                     #P_k matrix from DH26 with k=2 
-                    cu.P_k(nx,nx-1,qc,int(j*np.log2(nx)),params)
+                    cu.P_k(nx,nx-1,qc,int(j*math.log2(nx)),params)
 
                     #U1
                     qbs_qbsT = tertiary_str([qbs])[0] #Get bitstring for AA^T
-                    qbs_qbsT += [1]*int(np.log2(nx)) + [2]*j*int(np.log2(nx))
+                    qbs_qbsT += [1]*int(math.log2(nx)) + [2]*j*int(math.log2(nx))
                     len_qbs = len(qbs_qbsT)
                     Xlist = []
                     Clist = []

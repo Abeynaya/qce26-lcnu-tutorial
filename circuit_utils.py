@@ -264,5 +264,168 @@ def measure_delta_ijk(circs_delta,coeffs_ijk,thetas):
     return(delta)
 
 
+import pennylane as qml
+import pennylane.estimator as qre
 
- 
+from qiskit import QuantumCircuit
+from qiskit.circuit.library import MCXGate
+
+
+def is_mcx_instruction(instruction):
+    """
+    Return True if a Qiskit instruction is an MCX gate.
+
+    This handles MCX gates whose names may be:
+        mcx
+        mcx_gray
+        mcx_recursive
+        mcx_v_chain
+        etc.
+    """
+
+    operation = instruction.operation
+
+    return (
+        isinstance(operation, MCXGate)
+        or operation.name.lower().startswith("mcx")
+    )
+
+
+def get_mcx_t_count(qiskit_circuit):
+    """
+    Compute the T-gate count contributed by MCX gates.
+
+    Assumed formula:
+
+        T_count(MCX with k controls) = 8*k - 12
+    """
+
+    total_mcx_t_count = 0
+    mcx_data = []
+
+    for instruction in qiskit_circuit.data:
+        if is_mcx_instruction(instruction):
+            operation = instruction.operation
+
+            # An MCX gate has k control qubits and one target qubit.
+            num_controls = getattr(
+                operation,
+                "num_ctrl_qubits",
+                len(instruction.qubits) - 1,
+            )
+
+            t_count = 8 * num_controls - 12
+
+            total_mcx_t_count += t_count
+
+            mcx_data.append({
+                "controls": num_controls,
+                "t_count": t_count,
+            })
+
+    return total_mcx_t_count, mcx_data
+
+
+def get_t_count_from_resources(resources):
+    """
+    Extract the T-gate count from PennyLane's Resources object.
+
+    PennyLane stores CompressedResourceOp objects as dictionary keys,
+    rather than using strings such as "T".
+    """
+
+    for resource_op, count in resources.gate_types.items():
+        if resource_op.op_type.__name__ == "T":
+            return count
+
+    return 0
+
+
+def estimate_remaining_gates(qiskit_circuit):
+    """
+    Estimate the T-gate count of all non-MCX gates using PennyLane.
+
+    MCX gates are removed from a copy of the circuit before conversion.
+    The original Qiskit circuit is not modified.
+
+    No transpilation is performed.
+    """
+
+    # Make an empty circuit with the same registers as the input circuit.
+    circuit_without_mcx = qiskit_circuit.copy_empty_like()
+
+    # Copy every instruction except MCX gates.
+    for instruction in qiskit_circuit.data:
+        if not is_mcx_instruction(instruction):
+            circuit_without_mcx.append(
+                instruction.operation,
+                instruction.qubits,
+                instruction.clbits,
+            )
+
+    # Convert only the non-MCX circuit to PennyLane.
+    pennylane_circuit = qml.from_qiskit(circuit_without_mcx)
+
+    # Estimate resources using the Clifford+T gate set.
+    estimator = qre.estimate(
+        pennylane_circuit,
+        gate_set={
+            "Hadamard",
+            "S",
+            "CNOT",
+            "T",
+        },
+    )
+
+    resources = estimator()
+
+    remaining_t_count = get_t_count_from_resources(resources)
+
+    return remaining_t_count, resources
+
+
+def estimate_total_t_count(qiskit_circuit):
+    """
+    Compute the total T-gate count of a Qiskit circuit.
+
+    The total is:
+
+        MCX T count + PennyLane-estimated remaining T count
+    """
+
+    mcx_t_count, mcx_data = get_mcx_t_count(qiskit_circuit)
+
+    remaining_t_count, resources = estimate_remaining_gates(
+        qiskit_circuit
+    )
+
+    total_t_count = mcx_t_count + remaining_t_count
+
+    return {
+        "total_t_count": total_t_count,
+        "mcx_t_count": mcx_t_count,
+        "remaining_t_count": remaining_t_count,
+        "mcx_gates": mcx_data,
+        "resources": resources,
+    }
+
+
+def estimate_circuits(circuits):
+    """
+    Estimate the total T-gate count for every circuit in a list.
+
+    Returns a list of dictionaries containing the estimate for each
+    circuit.
+    """
+
+    results = []
+
+    for index, circuit in enumerate(circuits):
+        estimate = estimate_total_t_count(circuit)
+
+        results.append({
+            "circuit_index": index,
+            **estimate,
+        })
+
+    return results
