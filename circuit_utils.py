@@ -429,3 +429,17 @@ def estimate_circuits(circuits):
         })
 
     return results
+
+
+def circuit_slice(qc, start, stop):
+    """Return operations start through stop - 1 as a new circuit."""
+    sliced = qc.copy_empty_like()
+
+    for instruction in qc.data[start:stop]:
+        sliced.append(
+            instruction.operation,
+            instruction.qubits,
+            instruction.clbits,
+        )
+
+    return sliced
